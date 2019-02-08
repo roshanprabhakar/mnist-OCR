@@ -53,6 +53,7 @@ public class DataLoader {
                     Add the DataPoint to your dataset list.
          */
             String[] coordinates = lines[a].split(",");
+
             short[] dataArray = new short[coordinates.length - 1];
 
             for (int i = 1; i < coordinates.length; i++) {

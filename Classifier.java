@@ -25,19 +25,75 @@ public class Classifier {
         addTrainingData(new DataPoint(label, img));
     }
 
+    // currently k = 1
+//    public String classify(short[][] pixels) {
+//    String closestValue = "9"; //variable
+//    double distance = Integer.MAX_VALUE; //variable
+//        for (DataPoint dp : trainingData) {
+//        if (distance(pixels, dp.getData().getBWPixelGrid()) < distance) {
+//            distance = distance(pixels, dp.getData().getBWPixelGrid());
+//            closestValue = dp.getLabel();
+//        }
+//    }
+//
+//        return closestValue;
+//}
+
+    //goal k = 2
     public String classify(short[][] pixels) {
         if (trainingData.size() == 0) return "no training data";
 
-        String closestValue = "9"; //variable
+        ArrayList<String> closestLabels = new ArrayList<>();
+
+        DataPoint currentClosest = new DataPoint();
+        for (int i = 0; i < n; i++) {
+            currentClosest = findClosest(pixels);
+            closestLabels.add(currentClosest.getLabel());
+            trainingData.remove(currentClosest);
+        }
+
+        return mode(closestLabels);
+    }
+
+    private DataPoint findClosest(short[][] pixels) {
         double distance = Integer.MAX_VALUE; //variable
+        DataPoint closest = new DataPoint();
         for (DataPoint dp : trainingData) {
             if (distance(pixels, dp.getData().getBWPixelGrid()) < distance) {
                 distance = distance(pixels, dp.getData().getBWPixelGrid());
-                closestValue = dp.getLabel();
+                closest = dp;
             }
         }
+        return closest;
+    }
 
-        return closestValue;
+    //assuming contains compares string values, not object heap locations
+    private String mode(ArrayList<String> arr) {
+        ArrayList<String> uniqueCharacters = new ArrayList<>();
+        for (String str : arr) {
+            if (!contains(arr, str)) {
+                uniqueCharacters.add(str);
+            }
+        }
+        System.out.println(uniqueCharacters);
+        int[] repetitions = new int[uniqueCharacters.size()];
+        for (String str : arr) {
+            repetitions[uniqueCharacters.indexOf(str)]++;
+        }
+        int maxIndex = 0;
+        for (int i = 0; i < repetitions.length; i++) {
+            if (repetitions[i] > repetitions[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+        return uniqueCharacters.get(maxIndex);
+    }
+
+    private boolean contains(ArrayList<String> arr, String str) {
+        for (String string : arr) {
+            if (arr.equals(str)) return true;
+        }
+        return false;
     }
 
     public String classify(DImage img) {
@@ -53,7 +109,7 @@ public class Classifier {
             }
         }
 
-        return Math.sqrt(sum);
+        return sum;
     }
 
     public void test(List<DataPoint> test) {

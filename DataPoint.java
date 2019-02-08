@@ -7,6 +7,10 @@ public class DataPoint {
         this.data = data;
     }
 
+    public DataPoint() {
+
+    }
+
     public String getLabel() {
         return label;
     }
